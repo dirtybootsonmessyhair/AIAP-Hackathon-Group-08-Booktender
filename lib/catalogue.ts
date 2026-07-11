@@ -17,16 +17,16 @@ export type CatalogueBook = {
 };
 
 const bite = (title: string, points: string[]) => [
-  `${title} in one breath: ${points[0]}.`,
-  `The invitation: ${points[1]}.`,
-  `Notice the central tension: ${points[2]}.`,
-  `A useful lens for this reading: ${points[3]}.`,
-  `The emotional weather is ${points[4]}.`,
-  `Ask yourself: ${points[5]}.`,
-  `Why it lasts: ${points[6]}.`,
-  `Pause here and put one idea into your own words.`,
-  `Save the thought that feels most useful today.`,
-  `Ready for more? Choose the legal reading route below.`,
+  `Premise: ${points[0]}.`,
+  `Core idea: ${points[1]}.`,
+  `Main tension: ${points[2]}.`,
+  `Reading lens: ${points[3]}.`,
+  `Emotional atmosphere: ${points[4]}.`,
+  `Interpretation question: ${points[5]}.`,
+  `Why readers return to ${title}: ${points[6]}.`,
+  `How the book works: ${points[0]}, but the lasting force comes from ${points[2]}.`,
+  `Today's takeaway: ${points[1]}; keep that in mind as the story or argument unfolds.`,
+  `Final orientation: ${points[6]}. If this clicked, continue through the legal reading or purchase route below.`,
 ];
 
 export const catalogue: CatalogueBook[] = [
@@ -50,7 +50,15 @@ export type Mood = typeof moods[number];
 export function fallbackRecommendations(mood: string, genres: string[] = []) {
   const moodMatches: Record<string, string[]> = { Bright:["Hopeful","Adventurous"], Gloomy:["Reflective","Focused"] };
   const accepted = moodMatches[mood] || [mood];
-  const matched = catalogue.filter((book) => accepted.some((item) => book.moods.includes(item)) || book.genres.some((genre) => genres.includes(genre)));
+  const score = (book: CatalogueBook) =>
+    (accepted.some((item) => book.moods.includes(item)) ? 3 : 0) +
+    (book.genres.some((genre) => genres.includes(genre)) ? 1 : 0) +
+    (book.publicDomain ? 0.25 : 0);
+  const matched = catalogue
+    .map((book) => ({ book, score:score(book) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || b.book.rating - a.book.rating)
+    .map((item) => item.book);
   return (matched.length >= 3 ? matched : catalogue).slice(0, 3).map((book, index) => ({
     bookId: book.id,
     reason: index === 0 ? `This is the strongest fit for a ${mood.toLowerCase()} reading moment.` : `Its tone and reading commitment make it an easy next step for today.`
