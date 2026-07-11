@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { catalogue, fallbackRecommendations, moods, type CatalogueBook, type Mood } from "../../lib/catalogue";
 import { supabase } from "../../lib/supabase";
+import { Button } from "../../components/ui/button";
 
 type Shelf = "queue" | "reading" | "read";
 type LibraryItem = { book: CatalogueBook; shelf: Shelf; progress: number; page: number };
@@ -102,5 +103,5 @@ export default function Booktender() {
 }
 
 function Spotlight({ quote, slideIndex, onPrevious, onNext }: { quote:(typeof quotes)[number]; slideIndex:number; onPrevious:() => void; onNext:() => void }) {
-  return <section className={`spotlight visual-spotlight ${quote.tone}`} style={{ backgroundImage:`linear-gradient(100deg, rgba(23,20,26,.84) 0%, rgba(23,20,26,.42) 58%, rgba(23,20,26,.18) 100%), url(${quote.image})`, backgroundPosition:quote.visual === "portrait" ? "right center" : "center" }}><button onClick={onPrevious} aria-label="Previous literary spotlight">←</button><div><span className="eyebrow">Literary spotlight · auto-playing</span><blockquote>“{quote.quote}”</blockquote><p>{quote.author} · {quote.source}</p><small>Public-domain quotation and {quote.visual === "portrait" ? "author portrait" : "book-cover image"}.</small><div className="spotlight-dots" aria-label="Carousel position">{quotes.map((_, index) => <i key={index} className={index === slideIndex ? "active" : ""} />)}</div></div><button onClick={onNext} aria-label="Next literary spotlight">→</button></section>;
+  return <section className={`spotlight visual-spotlight ${quote.tone}`} style={{ backgroundImage:`linear-gradient(100deg, rgba(23,20,26,.84) 0%, rgba(23,20,26,.42) 58%, rgba(23,20,26,.18) 100%), url(${quote.image})`, backgroundPosition:quote.visual === "portrait" ? "right center" : "center" }}><Button variant="outline" size="icon" onClick={onPrevious} aria-label="Previous literary spotlight">←</Button><div><span className="eyebrow">Literary spotlight · auto-playing</span><blockquote>“{quote.quote}”</blockquote><p>{quote.author} · {quote.source}</p><small>Public-domain quotation and {quote.visual === "portrait" ? "author portrait" : "book-cover image"}.</small><div className="spotlight-dots" aria-label="Carousel position">{quotes.map((_, index) => <i key={index} className={index === slideIndex ? "active" : ""} />)}</div></div><Button variant="outline" size="icon" onClick={onNext} aria-label="Next literary spotlight">→</Button></section>;
 }
